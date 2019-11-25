@@ -51,9 +51,6 @@ setup(
         'Programming Language :: Python :: 3.9',
         'Intended Audience :: Developers',
     ],
-    install_requires=[
-        'six',
-    ],
     extras_require={
         'recomended': [
             'simplejson',

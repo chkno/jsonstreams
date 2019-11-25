@@ -4,6 +4,11 @@ Changes
 next
 ------
 
+New Features
+
+- Drop support for python 2
+- Drop six requirement
+
 Bug Fixes:
 
 - Fix a bug that prevents the Stream class from producing proper compact JSON output
@@ -13,6 +18,7 @@ Bug Fixes:
 - flush the fd before closing the Stream
   (`#24 <https://github.com/dcbaker/jsonstreams/issues/24>`_)
 
+
 0.4.3
 ------
 
@@ -20,7 +26,6 @@ New Features
 
 - Add support for Python 3.9
 - Drop support for python 3.4
-- Drop support for python 2
 
 0.4.2
 ------
