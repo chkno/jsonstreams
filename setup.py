@@ -43,9 +43,7 @@ setup(
     classifiers=[
         'Development Status :: 4 - Beta',
         'License :: OSI Approved :: MIT License',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3 :: Only',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
@@ -57,7 +55,6 @@ setup(
         'six',
     ],
     extras_require={
-        ':python_version < "3.4"': ['enum34'],
         'recomended': [
             'simplejson',
         ],
@@ -71,5 +68,5 @@ setup(
     keywords='JSON stream',
     packages=['jsonstreams'],
     cmdclass={'test': Tox},
-    python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*",
+    python_requires=">=3.6",
 )
