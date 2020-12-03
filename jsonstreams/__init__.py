@@ -150,7 +150,9 @@ class BaseWriter(object):
 
     def encode_and_write(self, value, indent=False):
         """JSON-encode the value and then write it."""
-        self.raw_write(self.encoder.encode(value), indent=indent)
+        if indent:
+            self.fd.write(self._indent())
+        self.raw_write(self.encoder.encode(value))
 
     def raw_write(self, value, indent=False, newline=False):
         if indent:
