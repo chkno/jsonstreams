@@ -118,6 +118,30 @@ class InvalidTypeError(JSONStreamsError):
     """
 
 
+class StringStream(object):
+    """Emit a stream as a JSON string."""
+
+    def __init__(self, stream):
+        self.stream = stream
+
+    def encode_and_stream_to(self, encoder, write):
+        """Copy stream, encoded as a JSON, into write."""
+        def _strip_quotes(string):
+            return string[1:-1]
+
+        chunksize = 4096
+        write('"')
+        # TODO: Handle Unicode-ness mismatches between input and output streams?
+        # TODO: Test thoroughly with multi-byte Unicode characters that cross
+        #       chunk boundaries.
+        while True:
+            chunk = self.stream.read(chunksize)
+            if not chunk:
+                break
+            write(_strip_quotes(encoder.encode(chunk)))
+        write('"')
+
+
 class BaseWriter(object):
     """Private class for writing things."""
 
@@ -152,7 +176,10 @@ class BaseWriter(object):
         """JSON-encode the value and then write it."""
         if indent:
             self.fd.write(self._indent())
-        self.raw_write(self.encoder.encode(value))
+        if isinstance(value, StringStream):
+            value.encode_and_stream_to(self.encoder, self.raw_write)
+        else:
+            self.raw_write(self.encoder.encode(value))
 
     def raw_write(self, value, indent=False, newline=False):
         if indent:

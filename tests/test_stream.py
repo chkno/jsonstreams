@@ -21,6 +21,7 @@
 
 
 import json
+import resource
 import textwrap
 
 import pytest # type: ignore
@@ -1447,3 +1448,40 @@ class TestArray(object):
                 actual = json.load(f)
 
             assert actual == expected
+
+
+class TestStringStream(object):
+
+    @pytest.fixture(autouse=True)
+    def chdir(self, tmpdir):
+        tmpdir.chdir()
+
+    def test_quotes(self):
+        with open('input', 'w') as f:
+            f.write('The "thing" thing')
+
+        s = jsonstreams.Stream(jsonstreams.Type.object, filename='foo')
+        with open('input', 'r') as f:
+            s.write('foo', jsonstreams.StringStream(f))
+        s.close()
+
+        with open('foo', 'r') as f:
+            assert f.read() == '{"foo": "The \\"thing\\" thing"}'
+
+    def test_memory_usage(self):
+        memoryAtStart = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        if memoryAtStart < 1:
+            pytest.skip("No maxrss rusage")
+
+        fileSize = memoryAtStart * 3
+        with open('input', 'w') as f:
+            for _ in range(fileSize):
+                f.write("x" * 1024)
+
+        s = jsonstreams.Stream(jsonstreams.Type.object, filename='foo')
+        with open('input', 'r') as f:
+            s.write('large file', jsonstreams.StringStream(f))
+        s.close()
+
+        memoryAtEnd = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        assert memoryAtEnd < fileSize
